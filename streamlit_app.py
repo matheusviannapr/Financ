@@ -41,9 +41,9 @@ def load_monthly_data(filename_prefix):
         return None
 
 # Função para carregar múltiplos arquivos mensais e compará-los
-def load_and_compare_monthly_data(filename_prefix):
+def load_and_compare_monthly_data(filename_prefix, widget_key):
     files = list_monthly_files(filename_prefix)
-    selected_files = st.multiselect("Selecione os meses para comparação", files)
+    selected_files = st.multiselect(f"Selecione os meses para comparação ({widget_key})", files, key=widget_key)
     
     if len(selected_files) > 0:
         data_frames = []
@@ -54,11 +54,11 @@ def load_and_compare_monthly_data(filename_prefix):
         
         # Combinar todos os DataFrames
         combined_df = pd.concat(data_frames)
-        st.write("Dados combinados dos meses selecionados:")
+        st.write(f"Dados combinados dos meses selecionados ({widget_key}):")
         st.dataframe(combined_df)
         
         # Gerar gráficos comparativos
-        st.write("Comparação Gráfica")
+        st.write(f"Comparação Gráfica ({widget_key})")
         st.bar_chart(combined_df.set_index('Mês')[['Planejado', 'Real']])
         return combined_df
 
@@ -99,9 +99,9 @@ def page_orcamento():
     st.write("Histórico Mensal de Despesas")
     load_monthly_data('despesas_mensal')
 
-    # Comparação entre meses
+    # Comparação entre meses (com chave única)
     st.write("Comparação entre meses de Despesas")
-    load_and_compare_monthly_data('despesas_mensal')
+    load_and_compare_monthly_data('despesas_mensal', 'despesas_comparison')
 
     # Carregar os dados de renda
     renda_df = load_data('renda.csv', {
@@ -131,9 +131,9 @@ def page_orcamento():
     st.write("Histórico Mensal de Renda")
     load_monthly_data('renda_mensal')
 
-    # Comparação entre meses
+    # Comparação entre meses (com chave única)
     st.write("Comparação entre meses de Renda")
-    load_and_compare_monthly_data('renda_mensal')
+    load_and_compare_monthly_data('renda_mensal', 'renda_comparison')
 
 # Página de Investimentos
 def page_investimentos():
@@ -167,9 +167,9 @@ def page_investimentos():
     st.write("Histórico Mensal de Investimentos")
     load_monthly_data('investimentos_mensal')
 
-    # Comparação entre meses
+    # Comparação entre meses (com chave única)
     st.write("Comparação entre meses de Investimentos")
-    load_and_compare_monthly_data('investimentos_mensal')
+    load_and_compare_monthly_data('investimentos_mensal', 'investimentos_comparison')
 
 # Configurando as páginas
 page = st.sidebar.selectbox("Escolha a página", ["Orçamento", "Investimentos"])
